@@ -1,4 +1,4 @@
-# DL_compression
+# compression (we are not compressing dl)
 This is our repo for the DL biomedical image analysis papers
 TIMELINE
 ![image](https://github.com/user-attachments/assets/a8eefb84-155e-4cc1-833c-637e7be301ff)
