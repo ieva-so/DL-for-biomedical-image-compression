@@ -1,0 +1,17 @@
+name: ❓ Question / Other
+description: Ask a question or raise a non-bug/non-feature issue
+title: "[Question]: "
+labels: [question]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Need help or want to ask something? Fill out the form below.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: What’s your question or comment?
+      description: Ask your question or explain your comment in detail.
+    validations:
+      required: true
