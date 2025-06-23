@@ -15,6 +15,8 @@ for biomedical images (structure is important) - compression rate + MS-SSIM (
 Grayscale: EMPIAR-12592 (Scanning Electron Microscopy)
 RGB: Open TG-GATEs (Histopathology)
 
+## Benchmarking
+
 Benchmarking stage 1: Compression benchmarking dataset  
   - https://imagecompression.info/test_images/  
   - Grayscale 16 bit - get standard benchmarking metrics out  
