@@ -15,6 +15,8 @@ for biomedical images (structure is important) - compression rate + MS-SSIM (
 Grayscale: EMPIAR-12592 (Scanning Electron Microscopy)
 RGB: Open TG-GATEs (Histopathology)
 
+## Benchmarking
+
 Benchmarking stage 1: Compression benchmarking dataset  
   - https://imagecompression.info/test_images/  
   - Grayscale 16 bit - get standard benchmarking metrics out  
@@ -25,7 +27,7 @@ Benchmarking stage 2: Performance on grayscale images - Electron microscopy data
   - Contour extraction performance on EMPIAR-12592 dataset  
 Benchmarking stage 3: Performance on RGB images - Histopathology dataset  
   - General compression performance metrics on the Open TG-GATEs dataset  
-  - Performance of nuclei segmentation before and after segmentation (SAM for histopathology - https://arxiv.org/abs/2502.00408)  
+  - Performance of nuclei segmentation before and after segmentation (STARDIST)  
 Benchmarking stage 4: unseen image types  
   - Grayscale: MRI dataset (select one from bioimage archive)  
   - RGB: Brightfield microscopy (select one from bioimage archive)  
@@ -37,8 +39,8 @@ Benchmarking stage 4: unseen image types
 2) Compression Ratio (size of compressed image)/(size of original image) via sys.getsizeof(image), inverse - compression factor
 3) Information loss: Mean Squared
    ![image](https://github.com/user-attachments/assets/1b369f23-e3cd-4b22-b177-89f54bcb0a3d)
-4) peak signal to noise ratio pSNR = 20lg(Imax/sqrt(MSE)) - higher value indicates higher image quality
+4) peak signal to noise ratio pSNR = 20log20(Imax/sqrt(MSE)) - higher value indicates higher image quality
 5) Structural integrity and degradation - Structural similarity index measure (SSIM), implimented from scikit-image, import compare_ssim
    ![image](https://github.com/user-attachments/assets/10c7301b-9a05-4367-932b-601166c6f15c)
-6) Segmentation and contour similarity - DICE score ![image](https://github.com/user-attachments/assets/9187cfb4-074c-4ae7-8992-61f98d9826eb)
+6) Segmentation and contour similarity - DICE score ![image](https://github.com/user-attachments/assets/9187cfb4-074c-4ae7-8992-61f98d9826eb), SEGMENT WITH STARDIST (https://arxiv.org/abs/2203.02284)
 
