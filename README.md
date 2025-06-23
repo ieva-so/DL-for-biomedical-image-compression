@@ -33,7 +33,13 @@ Benchmarking stage 4: unseen image types
   - RGB: Brightfield microscopy (select one from bioimage archive)  
 
 
-## Evaluation Metrics
+## Evaluation 
+1st *run runtime_eval.py with the model to be evaluated THIS WILL CALCULATE THE RUNTIME OF COMPRESSION AND DECOMPRESSION AND THE IMAGE SIZES TO AS WELL AS SAVE ALL THE OUTPUTS*
+2nd *run eval.py*
+3rd *run eval_graphs.ipynb* --> save all graphs and use for visualizations, pandas dataframes for overview tables!
+
+
+
 
 1) Compression time
 2) Compression Ratio (size of compressed image)/(size of original image) via sys.getsizeof(image), inverse - compression factor
