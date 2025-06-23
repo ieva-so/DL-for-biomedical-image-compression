@@ -40,5 +40,5 @@ Benchmarking stage 4: unseen image types
 4) peak signal to noise ratio pSNR = 20log20(Imax/sqrt(MSE)) - higher value indicates higher image quality
 5) Structural integrity and degradation - Structural similarity index measure (SSIM), implimented from scikit-image, import compare_ssim
    ![image](https://github.com/user-attachments/assets/10c7301b-9a05-4367-932b-601166c6f15c)
-6) Segmentation and contour similarity - DICE score ![image](https://github.com/user-attachments/assets/9187cfb4-074c-4ae7-8992-61f98d9826eb), SEGMENT WITH STARDIST
+6) Segmentation and contour similarity - DICE score ![image](https://github.com/user-attachments/assets/9187cfb4-074c-4ae7-8992-61f98d9826eb), SEGMENT WITH STARDIST (https://arxiv.org/abs/2203.02284)
 
