@@ -3,6 +3,9 @@
 true_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\datasets\EMPIAR-12592\empiar-12592-0000-0900\12592\data-cropped'
 com_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\datasets\EMPIAR-12592\empiar-12592-0000-0900\12592\data-cropped'
 decom_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\datasets\EMPIAR-12592\empiar-12592-0000-0900\12592\data-processed'
+model = 'fake_model'
+dataset = 'EMPIAR-12592'
+
 
 #depenendencies
 import numpy as np
@@ -19,7 +22,7 @@ from skimage.metrics import structural_similarity as ssim
 
 # evaluation
 def evaluate_images(true_images_dir, com_images_dir, decom_images_dir):
-    dataframe = pd.DataFrame(columns=['image_name', 'compression_ratio', 'compression_factor', 'mse','psnr', 'ssim'])
+    dataframe = pd.DataFrame(columns=['model','dataset','image_name', 'compression_ratio', 'compression_factor', 'mse','psnr', 'ssim'])
     true_images = sorted(os.listdir(true_images_dir))
     com_images = sorted(os.listdir(com_images_dir))
     decom_images = sorted(os.listdir(decom_images_dir))
@@ -44,7 +47,7 @@ def evaluate_images(true_images_dir, com_images_dir, decom_images_dir):
         psnr = get_psnr(true_img, decom_img)
         mse = np.square(np.subtract(true_img,decom_img)).mean()
         ssim_value = ssim(true_img, decom_img, channel_axis=-1)
-        dataframe.loc[indx] = [true_img_name, compression_ratio, compression_factor, mse, psnr, ssim_value]
+        dataframe.loc[indx] = [model, dataset, true_img_name, compression_ratio, compression_factor, mse, psnr, ssim_value]
 
 
     return dataframe
