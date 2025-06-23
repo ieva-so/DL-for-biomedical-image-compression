@@ -8,6 +8,10 @@ TASKS
 IMPORTANT: have to allow to switch between architectures, which include or exclude colour component!
 
 ## Training:
+
+Loss functions https://arxiv.org/pdf/1511.08861
+for biomedical images (structure is important) - compression rate + MS-SSIM (
+
 Grayscale: EMPIAR-12592 (Scanning Electron Microscopy)
 RGB: Open TG-GATEs (Histopathology)
 
