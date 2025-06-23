@@ -7,7 +7,7 @@ TASKS
 
 IMPORTANT: have to allow to switch between architectures, which include or exclude colour component!
 
-Training:
+## Training:
 Grayscale: EMPIAR-12592 (Scanning Electron Microscopy)
 RGB: Open TG-GATEs (Histopathology)
 
@@ -25,4 +25,16 @@ Benchmarking stage 3: Performance on RGB images - Histopathology dataset
 Benchmarking stage 4: unseen image types  
   - Grayscale: MRI dataset (select one from bioimage archive)  
   - RGB: Brightfield microscopy (select one from bioimage archive)  
+
+
+## Evaluation Metrics
+
+1) Compression time
+2) Compression Ratio (size of compressed image)/(size of original image) via sys.getsizeof(image), inverse - compression factor
+3) Information loss: Mean Squared
+   ![image](https://github.com/user-attachments/assets/1b369f23-e3cd-4b22-b177-89f54bcb0a3d)
+4) peak signal to noise ratio pSNR = 20lg(Imax/sqrt(MSE)) - higher value indicates higher image quality
+5) Structural integrity and degradation - Structural similarity index measure (SSIM), implimented from scikit-image, import compare_ssim
+   ![image](https://github.com/user-attachments/assets/10c7301b-9a05-4367-932b-601166c6f15c)
+6) Segmentation and contour similarity - DICE score ![image](https://github.com/user-attachments/assets/9187cfb4-074c-4ae7-8992-61f98d9826eb)
 
