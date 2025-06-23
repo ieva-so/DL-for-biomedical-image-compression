@@ -1,10 +1,12 @@
 
 #initialize
+csv_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\evaluation\evaluation_results.csv'
 true_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\datasets\EMPIAR-12592\empiar-12592-0000-0900\12592\data-cropped'
 com_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\datasets\EMPIAR-12592\empiar-12592-0000-0900\12592\data-cropped'
 decom_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\datasets\EMPIAR-12592\empiar-12592-0000-0900\12592\data-processed'
-model = 'fake_model'
+model = 'fake_model2'
 dataset = 'EMPIAR-12592'
+
 
 
 #depenendencies
@@ -18,17 +20,29 @@ import pandas as pd
 from get_psnr import get_psnr
 from skimage.metrics import structural_similarity as ssim
 
+dataframe = pd.read_csv(csv_dir)
+num_rows = len(dataframe)
+
+if os.path.isfile(csv_dir):
+    try:
+        dataframe = pd.read_csv(csv_dir)
+    except Exception as e:
+        print(f"File exists but failed to read as DataFrame: {e}")
+else:
+    dataframe = pd.DataFrame(columns=['model','dataset','image_name', 'compression_ratio', 'compression_factor', 'mse','psnr', 'ssim'])
+
+
+
 
 
 # evaluation
-def evaluate_images(true_images_dir, com_images_dir, decom_images_dir):
-    dataframe = pd.DataFrame(columns=['model','dataset','image_name', 'compression_ratio', 'compression_factor', 'mse','psnr', 'ssim'])
+def evaluate_images(true_images_dir, com_images_dir, decom_images_dir, dataframe):
     true_images = sorted(os.listdir(true_images_dir))
     com_images = sorted(os.listdir(com_images_dir))
     decom_images = sorted(os.listdir(decom_images_dir))
-    indx = 0
+    indx = len(dataframe)
     for true_img_name, com_img_name, decom_img_name in zip(true_images, com_images, decom_images):
-        indx = indx+1
+        
         true_img_path = os.path.join(true_images_dir, true_img_name)
         com_img_path = os.path.join(com_images_dir, com_img_name)
         decom_img_path = os.path.join(decom_images_dir, decom_img_name)
@@ -48,14 +62,13 @@ def evaluate_images(true_images_dir, com_images_dir, decom_images_dir):
         mse = np.square(np.subtract(true_img,decom_img)).mean()
         ssim_value = ssim(true_img, decom_img, channel_axis=-1)
         dataframe.loc[indx] = [model, dataset, true_img_name, compression_ratio, compression_factor, mse, psnr, ssim_value]
-
+        indx = indx+1
 
     return dataframe
 
-df = evaluate_images(true_images_dir, com_images_dir, decom_images_dir)
+df = evaluate_images(true_images_dir, com_images_dir, decom_images_dir, dataframe)
 
 
-csv_output_path = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\evaluation\evaluation_results.csv'
-df.to_csv(csv_output_path, index=False)
+df.to_csv(csv_dir, index=False)
 
 print(f"Evaluation results saved to: {csv_output_path}")
