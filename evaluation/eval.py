@@ -6,6 +6,7 @@ com_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Semina
 decom_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\datasets\EMPIAR-12592\empiar-12592-0000-0900\12592\data-processed'
 model = 'fake_model2'
 dataset = 'EMPIAR-12592'
+pixel_bits = 8  # 8 for grayscale, 25 for RGB
 
 
 
@@ -29,7 +30,7 @@ if os.path.isfile(csv_dir):
     except Exception as e:
         print(f"File exists but failed to read as DataFrame: {e}")
 else:
-    dataframe = pd.DataFrame(columns=['model','dataset','image_name', 'compression_ratio', 'compression_factor', 'mse','psnr', 'ssim'])
+    dataframe = pd.DataFrame(columns=['model','dataset','image_name', 'compression_ratio', 'compression_factor','bpp', 'mse','psnr', 'ssim'])
 
 
 
@@ -53,6 +54,8 @@ def evaluate_images(true_images_dir, com_images_dir, decom_images_dir, dataframe
 
         #get the compression ratio and factor
         true_im_size = os.path.getsize(true_img_path)
+        true_im_dims = true_img.shape
+        true_im_pixels = true_im_dims[0] * true_im_dims[1] * true_im_dims[2] if len(true_im_dims) > 2 else true_im_dims[0] * true_im_dims[1]
         com_im_size = os.path.getsize(com_img_path)
 
         compression_ratio = true_im_size / com_im_size
@@ -61,7 +64,8 @@ def evaluate_images(true_images_dir, com_images_dir, decom_images_dir, dataframe
         psnr = get_psnr(true_img, decom_img)
         mse = np.square(np.subtract(true_img,decom_img)).mean()
         ssim_value = ssim(true_img, decom_img, channel_axis=-1)
-        dataframe.loc[indx] = [model, dataset, true_img_name, compression_ratio, compression_factor, mse, psnr, ssim_value]
+        bpp = com_im_size*pixel_bits / true_im_pixels
+        dataframe.loc[indx] = [model, dataset, true_img_name, compression_ratio, compression_factor,bpp, mse, psnr, ssim_value]
         indx = indx+1
 
     return dataframe
