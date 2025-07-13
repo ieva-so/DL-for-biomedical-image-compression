@@ -1,12 +1,12 @@
 
 #initialize
 csv_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\evaluation\evaluation_results.csv'
-true_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\datasets\EMPIAR-12592\empiar-12592-0000-0900\12592\data-cropped'
-com_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\datasets\EMPIAR-12592\empiar-12592-0000-0900\12592\data-cropped'
-decom_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\datasets\EMPIAR-12592\empiar-12592-0000-0900\12592\data-processed'
-model = 'fake_model2'
-dataset = 'EMPIAR-12592'
-pixel_bits = 8  # 8 for grayscale, 25 for RGB
+true_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\data\dataset\rawimages'
+com_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\data\dataset\compressed'
+decom_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\data\dataset\decompressed'
+model = 'INN_VAE'
+dataset = 'S-BIAD634'
+pixel_bits = 8  # 8 for grayscale, 24 for RGB
 
 
 
@@ -16,10 +16,14 @@ import skimage
 from skimage import io, filters, color, measure
 import matplotlib.pyplot as plt
 import os
-import cv2
+import sys
 import pandas as pd
 from get_psnr import get_psnr
 from skimage.metrics import structural_similarity as ssim
+
+
+
+
 
 dataframe = pd.read_csv(csv_dir)
 num_rows = len(dataframe)
@@ -61,10 +65,10 @@ def evaluate_images(true_images_dir, com_images_dir, decom_images_dir, dataframe
         compression_ratio = true_im_size / com_im_size
         compression_factor = 1 / compression_ratio 
 
-        psnr = get_psnr(true_img, decom_img)
-        mse = np.square(np.subtract(true_img,decom_img)).mean()
-        ssim_value = ssim(true_img, decom_img, channel_axis=-1)
-        bpp = com_im_size*pixel_bits / true_im_pixels
+        psnr = get_psnr(true_img, decom_img) # Peak Signal-to-Noise Ratio
+        mse = np.square(np.subtract(true_img,decom_img)).mean() # Mean Squared Error
+        ssim_value = ssim(true_img, decom_img, channel_axis=-1) # Structural Similarity Index
+        bpp = com_im_size*pixel_bits / true_im_pixels #Bitrate
         dataframe.loc[indx] = [model, dataset, true_img_name, compression_ratio, compression_factor,bpp, mse, psnr, ssim_value]
         indx = indx+1
 
