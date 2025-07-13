@@ -1,8 +1,8 @@
 # initialize
 true_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\datasets\EMPIAR-12592\empiar-12592-0000-0900\12592\data-cropped'
 com_images_dir = true_images_dir + '-compressed'
-decom_images_dir = com_images_dir + '-decompressed'
-model = somemodel.py
+decom_images_dir = true_images_dir + '-decompressed'
+model = 'model_name'
 weights = 'path to weights'
 dataset_name = 'EMPIAR-12592'
 runtime_eval_csv = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\evaluation\runtime_eval_results.csv'
@@ -11,10 +11,11 @@ runtime_eval_csv = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Semi
 import os
 import time
 from skimage import io, filters, color, measure
+
 from model import encode_image, decode_image  # Assuming these functions are defined in model.py
 import pandas as pd
 
-dataframe = pd.DataFrame(columns=['model', 'dataset', 'image_name', 'image_size','time_encode', 'time_decode'])
+dataframe = pd.DataFrame(columns=['model', 'dataset', 'image_name', 'image_size','time_encode', 'time_decode', 'compression_ratio'])
 
 
 for img_name in os.listdir(true_images_dir):
@@ -25,6 +26,7 @@ for img_name in os.listdir(true_images_dir):
 
     #get size of true image
     true_im_size = os.path.getsize(true_img_path)
+    true_img = io.imread(true_img_path)
 
 
     # Compress the image
@@ -35,6 +37,8 @@ for img_name in os.listdir(true_images_dir):
     io.imsave(com_img_path, compressed_img)
     end_time = time.time()
     time_encode = end_time - start_time
+    com_im_size = os.path.getsize(com_img_path)
+    compression_ratio = true_im_size / com_im_size
 
     # Decompress the image
     start_time = time.time()
@@ -49,7 +53,8 @@ for img_name in os.listdir(true_images_dir):
         'image_name': img_name,
         'image_size': true_im_size,
         'time_encode': time_encode,
-        'time_decode': time_decode
+        'time_decode': time_decode,
+        'compression_ratio': compression_ratio
     }, ignore_index=True)
 # Save the results to a CSV file
 dataframe.to_csv(runtime_eval_csv, index=False)
