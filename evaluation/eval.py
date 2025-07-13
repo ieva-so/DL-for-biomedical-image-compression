@@ -2,15 +2,15 @@
 #initialize
 csv_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\evaluation\evaluation_results.csv'
 true_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\data\dataset\rawimages'
-com_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\data\dataset\compressed'
-decom_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\data\dataset\decompressed'
+com_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\data\dataset\rawimages-compressed'
+decom_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\data\dataset\rawimages-decompressed'
 model = 'INN_VAE'
 dataset = 'S-BIAD634'
 pixel_bits = 8  # 8 for grayscale, 24 for RGB
 
 
 
-#depenendencies
+#dependencies
 import numpy as np
 import skimage
 from skimage import io, filters, color, measure
@@ -25,8 +25,7 @@ from skimage.metrics import structural_similarity as ssim
 
 
 
-dataframe = pd.read_csv(csv_dir)
-num_rows = len(dataframe)
+
 
 if os.path.isfile(csv_dir):
     try:
@@ -36,7 +35,7 @@ if os.path.isfile(csv_dir):
 else:
     dataframe = pd.DataFrame(columns=['model','dataset','image_name', 'compression_ratio', 'compression_factor','bpp', 'mse','psnr', 'ssim'])
 
-
+num_rows = len(dataframe)
 
 
 
@@ -54,7 +53,6 @@ def evaluate_images(true_images_dir, com_images_dir, decom_images_dir, dataframe
 
         true_img = io.imread(true_img_path)
         decom_img = io.imread(decom_img_path)
-        com_img = io.imread(com_img_path)
 
         #get the compression ratio and factor
         true_im_size = os.path.getsize(true_img_path)
@@ -79,4 +77,4 @@ df = evaluate_images(true_images_dir, com_images_dir, decom_images_dir, datafram
 
 df.to_csv(csv_dir, index=False)
 
-print(f"Evaluation results saved to: {csv_output_path}")
+print(f"Evaluation results saved to: {csv_dir}")

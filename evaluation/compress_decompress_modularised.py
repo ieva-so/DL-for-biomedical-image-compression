@@ -1,6 +1,16 @@
 import torch
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
+
+
+import sys
+import os
+# Add path to INN_VAE folder so training/ and models/ can be found
+current_dir = os.path.dirname(__file__)
+inn_vae_path = os.path.abspath(os.path.join(current_dir, '..', 'INN_VAE'))
+sys.path.append(inn_vae_path)
+
+
 from training.train_conv_vae import ConvVAE
 from models.inn import build_inn
 from torchvision import transforms
@@ -32,7 +42,7 @@ def get_sample(batch_size=1):
         transforms.Grayscale(num_output_channels=3),
         transforms.ToTensor()
     ])
-    dataset = BBBC005Dataset(root="../data/BBBC005_v1_images/subset", transform=transform)
+    dataset = BBBC005Dataset(root="C:\\Users\\ievas\\Desktop\\UNI\\00 SEMESTERS\\SoSe25\\Project Seminar Biomedical Image Analysis\\data\\dataset\\rawimages", transform=transform)
     return next(iter(torch.utils.data.DataLoader(dataset, batch_size=batch_size)))
 
 # --------------------------
@@ -65,11 +75,11 @@ def decompress(z_latent, conv_vae, inn_model):
 def decompress_and_compare():
     print("Loading INN and ConvVAE models...")
     inn_model = build_inn(channels=3).to(DEVICE)
-    inn_model.load_state_dict(torch.load("../training/checkpoints/inn_model.pth", map_location=DEVICE))
+    inn_model.load_state_dict(torch.load("../checkpoints/inn_model.pth", map_location=DEVICE))
     inn_model.eval()
 
     conv_vae = ConvVAE(in_channels=3, latent_dim=2048).to(DEVICE)
-    conv_vae.load_state_dict(torch.load("../training/checkpoints/conv_vae_model_low_compression.pth", map_location=DEVICE))
+    conv_vae.load_state_dict(torch.load("../checkpoints/conv_vae_model_low_compression.pth", map_location=DEVICE))
     conv_vae.eval()
 
     print("Fetching sample image...")
