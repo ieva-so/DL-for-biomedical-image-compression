@@ -1,9 +1,9 @@
 # initialize
-true_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\data\dataset\rawimages'
+true_images_dir = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\data\Tissue Images\rawimages'
 com_images_dir = true_images_dir + '-compressed'
 decom_images_dir = true_images_dir + '-decompressed'
-model = 'INN_VAE'
-dataset_name = 'S-BIAD634'
+model = 'INN_conv_vae_model_low_compression_rgb'
+dataset_name = 'MoNuSeg'
 runtime_eval_csv = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\evaluation\runtime_eval_results.csv'
 model_path = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Biomedical Image Analysis\DL_compression\INN_VAE\evaluation'
 
@@ -12,13 +12,14 @@ model_path = r'C:\Users\ievas\Desktop\UNI\00 SEMESTERS\SoSe25\Project Seminar Bi
 import time
 from skimage import io, filters, color, measure
 import imagecodecs
-from compress_decompress_modularised import compress, decompress, get_sample  # Assuming decompress_file.py contains the decompress function
+from compress_decompress_v2 import compress, decompress, get_sample, load_single_image, decompress_and_compare  # Assuming decompress_file.py contains the decompress function
 import pandas as pd
 import torch
 from torchvision import transforms
 from PIL import Image
 import sys
 import os
+from skimage import img_as_ubyte
 # Add path to INN_VAE folder so training/ and models/ can be found
 current_dir = os.path.dirname(__file__)
 inn_vae_path = os.path.abspath(os.path.join(current_dir, '..', 'INN_VAE'))
@@ -43,10 +44,15 @@ conv_vae.eval()
 
 os.makedirs(com_images_dir, exist_ok=True)
 os.makedirs(decom_images_dir, exist_ok=True)
-dataframe = pd.DataFrame(columns=['model', 'dataset', 'image_name', 'image_size','time_encode', 'time_decode', 'compression_ratio'])
+# Load existing CSV if it exists, otherwise create new DataFrame
+if os.path.exists(runtime_eval_csv):
+    dataframe = pd.read_csv(runtime_eval_csv)
+else:
+    dataframe = pd.DataFrame(columns=['model', 'dataset', 'image_name', 'image_size', 'time_encode', 'time_decode', 'compression_ratio'])
+num_rows = len(dataframe)
+counter = 0
 
-
-for img_name in os.listdir(true_images_dir):
+'''for img_name in os.listdir(true_images_dir):
     true_img_path = os.path.join(true_images_dir, img_name)
     com_img_path = os.path.join(com_images_dir, img_name)
     decom_img_path = os.path.join(decom_images_dir, img_name)
@@ -55,14 +61,18 @@ for img_name in os.listdir(true_images_dir):
     #get size of true image
 
     # === Load and transform the image ===
-    transform = transforms.Compose([
-    transforms.Resize((256, 256)),
-    transforms.Grayscale(num_output_channels=3),
-    transforms.ToTensor()
-    ])
+    #transform = transforms.Compose([
+    #transforms.Resize((256, 256)),
+    #transforms.Grayscale(num_output_channels=3),
+    #transforms.ToTensor()
+    #])
 
-    img = Image.open(true_img_path).convert("RGB")
-    img_tensor = transform(img).unsqueeze(0).to(DEVICE)  # Add batch dim
+    #img = Image.open(true_img_path).convert("RGB")
+    #img_tensor = transform(img).unsqueeze(0).to(DEVICE)  # Add batch dim
+
+    img_tensor = load_single_image(true_img_path, (256,256))  # Get a sample image tensor
+    print("img_tensor shape:", img_tensor.shape)
+    print("min:", img_tensor.min().item(), "max:", img_tensor.max().item(), "mean:", img_tensor.mean().item())
     img_name = os.path.basename(true_img_path)
     true_im_size = os.path.getsize(true_img_path)
 
@@ -86,10 +96,16 @@ for img_name in os.listdir(true_images_dir):
     # Decompress the image
     start_time = time.time()
     decompressed_img = decompress(compressed_img, conv_vae, inn_model)
-    decompressed_img = decompressed_img.detach().squeeze(0).cpu().numpy().transpose(1, 2, 0)
-    io.imsave(decom_img_path, decompressed_img)
+    print("decompressed_img shape:", decompressed_img.shape)
+    print("min:", decompressed_img.min().item(), "max:", decompressed_img.max().item(), "mean:", decompressed_img.mean().item())
+
+    decompressed_img = decompressed_img.detach().squeeze(0).cpu().clamp(0, 1).numpy().transpose(1, 2, 0)
+    io.imsave(decom_img_path, img_as_ubyte(decompressed_img))
+
     end_time = time.time()
     time_decode = end_time - start_time
+    decom_im_size = os.path.getsize(decom_img_path)
+    compression_ratio = decom_im_size / com_im_size
 
     dataframe.loc[len(dataframe)] = {
     'model': model,
@@ -100,7 +116,9 @@ for img_name in os.listdir(true_images_dir):
     'time_decode': time_decode,
     'compression_ratio': compression_ratio
     }
+    counter +=1
 
-# Save the results to a CSV file
-dataframe.to_csv(runtime_eval_csv, index=False)
+# Save the results to a CSV fileS
+dataframe.to_csv(runtime_eval_csv, index=False)'''
 print('done')   
+decompress_and_compare()  # Call the function to decompress and compare images

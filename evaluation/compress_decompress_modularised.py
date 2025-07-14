@@ -75,11 +75,11 @@ def decompress(z_latent, conv_vae, inn_model):
 def decompress_and_compare():
     print("Loading INN and ConvVAE models...")
     inn_model = build_inn(channels=3).to(DEVICE)
-    inn_model.load_state_dict(torch.load("../checkpoints/inn_model.pth", map_location=DEVICE))
+    inn_model.load_state_dict(torch.load("../checkpoints/inn_model_rgb.pth", map_location=DEVICE))
     inn_model.eval()
 
     conv_vae = ConvVAE(in_channels=3, latent_dim=2048).to(DEVICE)
-    conv_vae.load_state_dict(torch.load("../checkpoints/conv_vae_model_low_compression.pth", map_location=DEVICE))
+    conv_vae.load_state_dict(torch.load("../checkpoints/conv_vae_model_low_compression_rgb.pth", map_location=DEVICE))
     conv_vae.eval()
 
     print("Fetching sample image...")
